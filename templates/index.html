@@ -1,7 +1,7 @@
 <head>
   <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='foundation.min.css')}}">
   <script type="text/javascript" src="{{url_for('static', filename='jquery.js')}}"></script>
-  <script type="text/javascript" src="{{url_for('static', filename='single_question.js') }}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='index.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='foundation.min.js' )}}"></script>
 </head>
 
@@ -9,15 +9,14 @@
   <div class="container">
     <div class="row">
       <div class="small-5 small-centered columns">
-        <h1>Welcome to quizzical</h1>
-          <div id="question">
-            <h3></h3>
-          </div>
+        <h1>Listing all questions</h1>
+          <div id="list_area">
+            <ul>
 
-          <div id="answers">
-
+            </ul>
           </div>
       </div>
     </div>
   </div>
+  <a href="{{ url_for('home') }}">Back to the quiz </a>
 </body>

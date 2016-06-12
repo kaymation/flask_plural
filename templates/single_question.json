@@ -1,0 +1,11 @@
+{
+  "question": "{{  question }}",
+  "answers": [
+    {% for i, answer in answers %}
+      {
+        "answer": "{{ answer["body"] }}",
+        "correct": "{{ answer["correct"] }}"
+      }{% if i != last %},{% endif %}
+    {% endfor %}
+  ]
+}
