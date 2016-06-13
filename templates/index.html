@@ -15,8 +15,30 @@
 
             </ul>
           </div>
+          <div class="row">
+            <div id="pagination">
+
+            </div>
+          </div>
+          <label for="sort">Sort by:</label>
+          <select id="sort">
+            <option value="created">Created</option>
+            <option value="alpha">Alphabetical</option>
+          </select>
       </div>
+      <label>Create new question</label>
+      <form class="form" action="{{url_for('create')}}" method="post">
+        <label for="question">Question:</label>
+        <input name="question" id="question">
+        <label for="answer">Answer:</label>
+        <input name="answer" id="answer">
+        <label>Distractors</label>
+        <div id="distractors">
+
+        </div>
+
+      </form>
+      <a href="{{ url_for('home') }}">Back to the quiz </a>
     </div>
   </div>
-  <a href="{{ url_for('home') }}">Back to the quiz </a>
 </body>

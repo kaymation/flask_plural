@@ -6,13 +6,13 @@ $(document).ready(function(){
 
   $('#answers').on('click', '.answer', function(){
     $('.answer').each(function(i, answer){
-      if( $(answer).attr('data-correct') == "True"){
+      if( $(answer).attr('data-correct') == "true"){
         $(answer).addClass('success');
       } else {
         $(answer).addClass('alert');
       }
     });
-    if( $(this).attr('data-correct') == "True" ){
+    if( $(this).attr('data-correct') == "true" ){
       alert("Correct!");
     } else {
       alert("Sorry, wrong answer");
@@ -39,12 +39,12 @@ var getNextQuestion = function(askedIds){
   });
   request.done(function(response){
     console.log(response);
-    response_obj = JSON.parse(response);
+    response_obj = response;
     $('#question').find('h3').text(response_obj["question"]);
     var answers = response_obj["answers"]
     shuffle(answers)
     answers.forEach(function(answer, i){
-      elem = answer_elem(answer["answer"], answer["correct"] );
+      elem = answer_elem(answer.body, answer.correct );
       $('#answers').append(elem);
     });
 
