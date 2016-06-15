@@ -31,7 +31,7 @@ def index():
 def list():
     order = "id" if request.values.get('sort') == "created" else "body"
     limit = 10
-    offset = int(request.values.get('page')) * limit
+    offset = (int(request.values.get('page'))-1) * limit
     sql_string = "SELECT id, body FROM questions ORDER BY " + order + " LIMIT (%s) OFFSET (%s);"
     cur = get_db().cursor()
     cur.execute(sql_string, (limit, offset))
@@ -41,7 +41,23 @@ def list():
 
 @app.route('/new', methods=['POST'])
 def create():
-    return "whatever"
+    question = request.values.get('question')
+    answer = request.values.get('correct')
+    distractors = request.values.getlist('distractors[]')
+    print distractors
+    conn = get_db()
+    curr = conn.cursor()
+    question_query = "INSERT INTO questions (body) VALUES (%s) RETURNING id;"
+    answers_query = "INSERT INTO answers (body, correct, question_id) VALUES (%s, %s, %s)"
+    curr.execute(question_query, (question,))
+    question_id = curr.fetchone()[0]
+    curr.execute(answers_query, (answer, True, question_id))
+    if distractors is not None:
+        print "no surrender"
+        for distractor in distractors:
+            curr.execute(answers_query, (distractor, False, question_id))
+    conn.commit()
+    return jsonify(success=True)
 
 def question_obj(id, body):
     curr = get_db().cursor()

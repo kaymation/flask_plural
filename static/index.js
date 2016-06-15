@@ -22,6 +22,13 @@ $(document).ready(function(){
     var fields = $(this).parent().parent().find('.answers');
     fields.append("<input>");
   });
+
+  $("#add_question").click(postNewQuestion);
+
+  $("#add_dist_form").click(function(e) {
+    e.preventDefault();
+    $("#distractors").prepend("<input class='distractor'>")
+  })
 });
 
 var clickable_number = function(number){
@@ -67,7 +74,6 @@ var getListing = function(page, sort) {
   });
   request.done(function(response){
     response.forEach(function(question){
-      // $("#list_area").find("ul").append(question_elem(question))
       $(question_elem(question)).appendTo('#list_area ul').hide().fadeIn('fast')
     });
     $('#pagination').html(navline(parseInt(page)));
@@ -82,10 +88,52 @@ var question_elem = function(question){
   hidden_part += "<input id='" + question.answers[0].id + "'value='" + question.answers[0].body + "'>";
   hidden_part += "<label>Distractors</label>";
   question.answers.forEach(function(answer, i) {
-    hidden_part += "<input id='" + answer.id + "' value='" + answer.body + "'>"
+    if(i != 0){
+      hidden_part += "<input id='" + answer.id + "' value='" + answer.body + "'>";
+    }
   });
   hidden_part += "</div>";
   hidden_part += "<div class='button-group'><button class='button add_ans'>Add</button><button class='button blue update'>Update!</button></div>";
   hidden_part += "</div>";
   return open + hidden_part + "</li>"
+}
+
+var postNewQuestion = function(e){
+  e.preventDefault();
+  var question = $('#question').val();
+  var correct = $('#answer').val();
+  var distractors = [];
+  $('.distractor').each(function(i, d) {
+    distractors.push($(d).val());
+  });
+  data = {
+    question: question,
+    correct: correct,
+    distractors: distractors
+  }
+  $.ajax({
+    data: data,
+    url: '/new',
+    type: 'POST',
+    success: function(){
+       alert("Question Created Successfully");
+       $('.distractor').remove();
+       $('#question').val("");
+       $('#answer').val("");
+    },
+    error: function(xhr, code, error) {
+      alert("An error has occurred: " + code + ": " + error)
+    }
+  });
+}
+
+var answerEditObj = function(arr) {
+  if (arr.length == 1){
+    return { body: arr[0]};
+  } else {
+    return {
+      id: arr[0],
+      body: arr[1]
+    };
+  }
 }

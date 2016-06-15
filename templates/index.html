@@ -25,20 +25,20 @@
             <option value="created">Created</option>
             <option value="alpha">Alphabetical</option>
           </select>
+          <label>Create new question</label>
+          <form id="new_question" class="form" action="{{url_for('create')}}" method="post">
+            <label for="question">Question:</label>
+            <input name="question" id="question">
+            <label for="answer">Answer:</label>
+            <input name="answer" id="answer">
+            <label>Distractors</label>
+            <div id="distractors">
+              <button id="add_dist_form" class="button">Add Distractor<button>
+            </div>
+            <input type="submit" class="button" id="add_question" value="Create Question">
+          </form>
+          <a href="{{ url_for('home') }}">Back to the quiz </a>
       </div>
-      <label>Create new question</label>
-      <form class="form" action="{{url_for('create')}}" method="post">
-        <label for="question">Question:</label>
-        <input name="question" id="question">
-        <label for="answer">Answer:</label>
-        <input name="answer" id="answer">
-        <label>Distractors</label>
-        <div id="distractors">
-
-        </div>
-
-      </form>
-      <a href="{{ url_for('home') }}">Back to the quiz </a>
     </div>
   </div>
 </body>
