@@ -23,6 +23,11 @@ $(document).ready(function(){
     fields.append("<input>");
   });
 
+  $('#list_area').on('click', '.update', function(){
+    var fullElem = $(this).parent().parent().parent();
+    updateQA(fullElem);
+  });
+
   $("#add_question").click(postNewQuestion);
 
   $("#add_dist_form").click(function(e) {
@@ -81,7 +86,7 @@ var getListing = function(page, sort) {
 }
 
 var question_elem = function(question){
-  var open = "<li class='callout' id='" + question.id + "'>" + question.body + "<button class='button blue edit float-right'>Edit</button>";
+  var open = "<li class='callout' id='" + question.id + "'><span>" + question.body + "</span><button class='button blue edit float-right'>Edit</button>";
   var hidden_part = "<div class='answers_space' style='display: none;'>";
   hidden_part += "<div class='answers'>"
   hidden_part += "<label for='" + question.answers[0].id + "'>Correct Answer:</label>";
@@ -122,18 +127,47 @@ var postNewQuestion = function(e){
        $('#answer').val("");
     },
     error: function(xhr, code, error) {
-      alert("An error has occurred: " + code + ": " + error)
+      alert("An error has occurred: " + code + ": " + error);
     }
   });
 }
 
-var answerEditObj = function(arr) {
+var answerEditObj = function(arr, correct) {
   if (arr.length == 1){
-    return { body: arr[0]};
+    return { body: arr[0], correct: correct};
   } else {
     return {
       id: arr[0],
-      body: arr[1]
+      body: arr[1],
+      correct: correct
     };
   }
+}
+
+var updateQA = function(fullElem) {
+  var question = {
+    id: fullElem.prop('id'),
+    body: fullElem.find('span').text()
+  }
+  answerElems = fullElem.find('.answers input')
+  var answers = answerElems.map(function(i, ans) {
+    var correct = (i == 0) ? true : false;
+    var raw = []
+    if($(ans).prop('id')) { raw.push($(ans).prop('id'))}
+    raw.push($(ans).val())
+    return answerEditObj(raw, correct)
+  });
+  var data = {
+    question: question,
+    answers: answers
+  };
+  var request = $.ajax({
+    data: {json: JSON.stringify(data)},
+    url: '/update',
+    type: 'POST'
+  });
+  request.done(function() {
+    alert('Question updated Successfully')
+  });
+
 }

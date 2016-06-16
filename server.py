@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import render_template, url_for, g, request, jsonify
 import psycopg2
+import json
 
 app = Flask(__name__, template_folder='templates')
 
@@ -58,6 +59,41 @@ def create():
             curr.execute(answers_query, (distractor, False, question_id))
     conn.commit()
     return jsonify(success=True)
+
+@app.route('/update', methods=['POST'])
+def update():
+    data = json.loads(request.values.get('json'))
+    print data['answers']
+    question = data['question']
+    answers = data['answers']
+    checkAndUpdateQuestion(question)
+    length = answers['length']
+    for i in range(length):
+        checkAndUpdateAnswer(answers[str(i)], question["id"])
+    return jsonify(success=True)
+
+def checkAndUpdateQuestion(question):
+    conn = get_db()
+    curr = conn.cursor()
+    update_string = "UPDATE questions SET body = (%s) WHERE id = (%s);"
+    curr.execute(update_string, (question["body"], question["id"]))
+    conn.commit()
+    return
+
+def checkAndUpdateAnswer(answer, question_id):
+    conn = get_db()
+    curr = conn.cursor()
+    print answer
+    if( 'id' in answer ):
+        print 'something is fucked here, something is fucked'
+        update_string = "UPDATE answers SET body = (%s) WHERE id = (%s);"
+        curr.execute(update_string, (answer["body"], answer["id"]))
+    else:
+        new_answer_string = "INSERT INTO answers (body, correct, question_id) VALUES (%s, %s, %s);"
+        params = (answer["body"], answer["correct"], question_id)
+        curr.execute(new_answer_string, params)
+    conn.commit()
+    return
 
 def question_obj(id, body):
     curr = get_db().cursor()
