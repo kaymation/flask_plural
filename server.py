@@ -45,7 +45,6 @@ def create():
     question = request.values.get('question')
     answer = request.values.get('correct')
     distractors = request.values.getlist('distractors[]')
-    print distractors
     conn = get_db()
     curr = conn.cursor()
     question_query = "INSERT INTO questions (body) VALUES (%s) RETURNING id;"
@@ -54,7 +53,6 @@ def create():
     question_id = curr.fetchone()[0]
     curr.execute(answers_query, (answer, True, question_id))
     if distractors is not None:
-        print "no surrender"
         for distractor in distractors:
             curr.execute(answers_query, (distractor, False, question_id))
     conn.commit()
@@ -63,7 +61,6 @@ def create():
 @app.route('/update', methods=['POST'])
 def update():
     data = json.loads(request.values.get('json'))
-    print data['answers']
     question = data['question']
     answers = data['answers']
     checkAndUpdateQuestion(question)
@@ -83,9 +80,7 @@ def checkAndUpdateQuestion(question):
 def checkAndUpdateAnswer(answer, question_id):
     conn = get_db()
     curr = conn.cursor()
-    print answer
     if( 'id' in answer ):
-        print 'something is fucked here, something is fucked'
         update_string = "UPDATE answers SET body = (%s) WHERE id = (%s);"
         curr.execute(update_string, (answer["body"], answer["id"]))
     else:
