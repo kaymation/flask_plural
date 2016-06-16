@@ -14,7 +14,9 @@ $(document).ready(function(){
   });
 
   $("#list_area").on('click', '.edit', function(){
+    $("span").attr('contentEditable', false);
     $(".answers_space").slideUp();
+    $(this).parent().find("span").attr('contentEditable', true);
     $(this).parent().find(".answers_space").slideDown();
   });
 
